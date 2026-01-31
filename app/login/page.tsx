@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata = {
   title: "Sign In",
-  description: "Sign in to your Scentbox account",
+  description: "Sign in to your Kunbo account",
 };
 
 function LoginFormSkeleton() {
@@ -31,7 +31,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>
-            Sign in to your Scentbox account
+            Sign in to your Kunbo account
           </CardDescription>
         </CardHeader>
         <CardContent>

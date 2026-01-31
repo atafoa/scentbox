@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container py-8 md:py-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div>
-            <h3 className="text-lg font-semibold">Scentbox</h3>
+            <h3 className="text-lg font-semibold">Kunbo</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Discover, log, and share your fragrance journey.
             </p>
@@ -68,7 +68,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Scentbox. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Kunbo. All rights reserved.</p>
         </div>
       </div>
     </footer>

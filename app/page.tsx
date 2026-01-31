@@ -131,7 +131,7 @@ export default async function HomePage() {
       <section className="bg-muted/30 py-16">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold">Why Scentbox?</h2>
+            <h2 className="text-2xl font-bold">Why Kunbo?</h2>
             <p className="text-muted-foreground mt-2">
               The ultimate platform for fragrance lovers
             </p>

@@ -69,7 +69,7 @@ export default function RegisterPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>
-            Join the Scentbox community today
+            Join the Kunbo community today
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

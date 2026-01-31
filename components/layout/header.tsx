@@ -35,7 +35,7 @@ export function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-xl font-bold text-primary">Scentbox</span>
+            <span className="text-xl font-bold text-primary">Kunbo</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             {session && (

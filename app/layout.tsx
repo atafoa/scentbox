@@ -12,8 +12,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Scentbox - Discover & Share Fragrances",
-    template: "%s | Scentbox",
+    default: "Kunbo - Discover & Share Fragrances",
+    template: "%s | Kunbo",
   },
   description:
     "Discover, log, rate, and review fragrances. Join the community of fragrance enthusiasts.",
