@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   keywords: ["fragrance", "perfume", "cologne", "review", "scent", "notes"],
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
