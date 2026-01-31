@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { ProfileHeader } from "@/components/user/profile-header";
 import { ReviewCard } from "@/components/review/review-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FragranceCard } from "@/components/fragrance/fragrance-card";
+import { Button } from "@/components/ui/button";
 import { Metadata } from "next";
+import { ArrowRight } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -41,6 +44,7 @@ async function getUser(username: string) {
           reviews: true,
           followers: true,
           following: true,
+          userFragrances: true,
         },
       },
     },
@@ -148,15 +152,25 @@ export default async function UserProfilePage({ params }: PageProps) {
 
           <TabsContent value="collection" className="mt-6">
             {ownedFragrances.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {ownedFragrances.map((uf) => (
-                  <FragranceCard
-                    key={uf.id}
-                    fragrance={uf.fragrance}
-                    variant="compact"
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {ownedFragrances.map((uf) => (
+                    <FragranceCard
+                      key={uf.id}
+                      fragrance={uf.fragrance}
+                      variant="compact"
+                    />
+                  ))}
+                </div>
+                <div className="mt-6 text-center">
+                  <Button variant="outline" asChild>
+                    <Link href={`/users/${username}/collection?status=owned`}>
+                      View full collection
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </>
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 <p>No fragrances in collection yet.</p>
@@ -166,15 +180,25 @@ export default async function UserProfilePage({ params }: PageProps) {
 
           <TabsContent value="wishlist" className="mt-6">
             {wantedFragrances.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {wantedFragrances.map((uf) => (
-                  <FragranceCard
-                    key={uf.id}
-                    fragrance={uf.fragrance}
-                    variant="compact"
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {wantedFragrances.map((uf) => (
+                    <FragranceCard
+                      key={uf.id}
+                      fragrance={uf.fragrance}
+                      variant="compact"
+                    />
+                  ))}
+                </div>
+                <div className="mt-6 text-center">
+                  <Button variant="outline" asChild>
+                    <Link href={`/users/${username}/collection?status=wanted`}>
+                      View full wishlist
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </>
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 <p>No fragrances in wishlist yet.</p>
