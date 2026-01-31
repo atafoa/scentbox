@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { FragranceCard } from "@/components/fragrance/fragrance-card";
 import { FragranceFilters } from "./filters";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Gender, Concentration } from "@prisma/client";
+
+const GENDER_VALUES = ["MASCULINE", "FEMININE", "UNISEX"] as const;
+const CONCENTRATION_VALUES = ["EAU_FRAICHE", "EAU_DE_COLOGNE", "EAU_DE_TOILETTE", "EAU_DE_PARFUM", "PARFUM", "EXTRAIT"] as const;
 
 interface PageProps {
   searchParams: Promise<{
@@ -31,19 +33,19 @@ async function getFragrances(params: {
 
   const where: {
     brand?: { slug: string };
-    gender?: Gender;
-    concentration?: Concentration;
+    gender?: string;
+    concentration?: string;
     notes?: { some: { note: { slug: string } } };
   } = {};
 
   if (params.brand) {
     where.brand = { slug: params.brand };
   }
-  if (params.gender && Object.values(Gender).includes(params.gender as Gender)) {
-    where.gender = params.gender as Gender;
+  if (params.gender && GENDER_VALUES.includes(params.gender as typeof GENDER_VALUES[number])) {
+    where.gender = params.gender;
   }
-  if (params.concentration && Object.values(Concentration).includes(params.concentration as Concentration)) {
-    where.concentration = params.concentration as Concentration;
+  if (params.concentration && CONCENTRATION_VALUES.includes(params.concentration as typeof CONCENTRATION_VALUES[number])) {
+    where.concentration = params.concentration;
   }
   if (params.note) {
     where.notes = { some: { note: { slug: params.note } } };
