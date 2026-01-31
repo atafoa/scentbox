@@ -178,7 +178,7 @@ export default async function FragranceDetailPage({ params }: PageProps) {
             <div className="flex flex-col gap-3">
               <CollectionButton
                 fragranceId={fragrance.id}
-                initialStatus={userCollection?.status || null}
+                initialStatus={userCollection?.status as "WANT" | "TRIED" | "OWN" | undefined}
               />
               {session ? (
                 userReview ? (
