@@ -277,7 +277,7 @@ export default async function FragranceDetailPage({ params }: PageProps) {
 
             <TabsContent value="notes" className="mt-6">
               {fragrance.notes.length > 0 ? (
-                <NotePyramid notes={fragrance.notes} />
+                <NotePyramid notes={fragrance.notes.map(n => ({ ...n, layer: n.layer as "TOP" | "MIDDLE" | "BASE" }))} />
               ) : (
                 <p className="text-muted-foreground">
                   No notes information available for this fragrance.
