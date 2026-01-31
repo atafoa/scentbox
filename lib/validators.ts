@@ -44,3 +44,17 @@ export const profileSchema = z.object({
     .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
     .optional(),
 });
+
+export const fragranceSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  brandId: z.string().min(1, "Brand is required"),
+  concentration: z.enum(["EAU_FRAICHE", "EAU_DE_COLOGNE", "EAU_DE_TOILETTE", "EAU_DE_PARFUM", "PARFUM", "EXTRAIT"]),
+  gender: z.enum(["MASCULINE", "FEMININE", "UNISEX"]),
+  releaseYear: z.number().int().min(1900).max(2030).optional().nullable(),
+  description: z.string().max(5000).optional(),
+  image: z.string().url().optional().or(z.literal("")),
+  notes: z.array(z.object({
+    noteId: z.string(),
+    layer: z.enum(["TOP", "MIDDLE", "BASE"]),
+  })).optional(),
+});

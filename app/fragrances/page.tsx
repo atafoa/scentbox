@@ -1,8 +1,12 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { FragranceCard } from "@/components/fragrance/fragrance-card";
 import { FragranceFilters } from "./filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const GENDER_VALUES = ["MASCULINE", "FEMININE", "UNISEX"] as const;
 const CONCENTRATION_VALUES = ["EAU_FRAICHE", "EAU_DE_COLOGNE", "EAU_DE_TOILETTE", "EAU_DE_PARFUM", "PARFUM", "EXTRAIT"] as const;
@@ -102,20 +106,31 @@ export const metadata = {
 
 export default async function FragrancesPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const [{ fragrances, total, page, totalPages }, brands, notes] = await Promise.all([
+  const [{ fragrances, total, page, totalPages }, brands, notes, session] = await Promise.all([
     getFragrances(params),
     getBrands(),
     getNotes(),
+    auth(),
   ]);
 
   return (
     <div className="container py-8">
       <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="text-3xl font-bold">Browse Fragrances</h1>
-          <p className="text-muted-foreground mt-2">
-            Explore {total.toLocaleString()} fragrances from top brands
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Browse Fragrances</h1>
+            <p className="text-muted-foreground mt-2">
+              Explore {total.toLocaleString()} fragrances from top brands
+            </p>
+          </div>
+          {session?.user && (
+            <Button asChild>
+              <Link href="/fragrances/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Fragrance
+              </Link>
+            </Button>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">

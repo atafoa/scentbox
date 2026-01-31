@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Search, Menu, LogOut, User, Settings, List, Plus } from "lucide-react";
+import { Search, Menu, LogOut, User, Settings, List, Plus, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -127,6 +127,12 @@ export function Header() {
                   <Link href="/lists/new">
                     <Plus className="mr-2 h-4 w-4" />
                     Create List
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/fragrances/new">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Add Fragrance
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
