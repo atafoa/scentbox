@@ -25,22 +25,12 @@ const NoteCategory = {
 } as const;
 
 async function main() {
-  console.log("Starting seed...");
+  console.log("Starting seed (preserving user data)...");
 
-  // Clear existing data
-  await prisma.activity.deleteMany();
-  await prisma.reviewLike.deleteMany();
-  await prisma.listItem.deleteMany();
-  await prisma.list.deleteMany();
-  await prisma.userFollow.deleteMany();
-  await prisma.userFragrance.deleteMany();
-  await prisma.review.deleteMany();
-  await prisma.fragranceNote.deleteMany();
-  await prisma.fragrance.deleteMany();
-  await prisma.note.deleteMany();
-  await prisma.brand.deleteMany();
+  // We no longer delete user data (reviews, collections, follows, etc.)
+  // Only upsert catalog data (notes, brands, fragrances)
 
-  console.log("Creating notes...");
+  console.log("Upserting notes...");
 
   // Create Notes
   const notesData = [
@@ -207,23 +197,31 @@ async function main() {
 
   const notes: Record<string, string> = {};
   for (const note of notesData) {
-    const created = await prisma.note.create({ data: note });
-    notes[note.slug] = created.id;
+    const upserted = await prisma.note.upsert({
+      where: { slug: note.slug },
+      update: { name: note.name, category: note.category },
+      create: note,
+    });
+    notes[note.slug] = upserted.id;
   }
 
-  console.log(`Created ${Object.keys(notes).length} notes`);
+  console.log(`Upserted ${Object.keys(notes).length} notes`);
 
-  console.log("Creating brands...");
+  console.log("Upserting brands...");
 
   const brands: Record<string, string> = {};
   for (const brand of brandsData) {
-    const created = await prisma.brand.create({ data: brand });
-    brands[brand.slug] = created.id;
+    const upserted = await prisma.brand.upsert({
+      where: { slug: brand.slug },
+      update: { name: brand.name, description: brand.description, country: brand.country },
+      create: brand,
+    });
+    brands[brand.slug] = upserted.id;
   }
 
-  console.log(`Created ${Object.keys(brands).length} brands`);
+  console.log(`Upserted ${Object.keys(brands).length} brands`);
 
-  console.log("Creating fragrances...");
+  console.log("Upserting fragrances...");
 
   // Combine all fragrances
   const allFragrances = [
@@ -234,6 +232,7 @@ async function main() {
   ];
 
   let created = 0;
+  let updated = 0;
   let skipped = 0;
 
   for (const fragranceData of allFragrances) {
@@ -244,8 +243,22 @@ async function main() {
     }
 
     try {
-      const fragrance = await prisma.fragrance.create({
-        data: {
+      // Check if fragrance exists
+      const existing = await prisma.fragrance.findUnique({
+        where: { slug: fragranceData.slug },
+      });
+
+      const fragrance = await prisma.fragrance.upsert({
+        where: { slug: fragranceData.slug },
+        update: {
+          name: fragranceData.name,
+          brandId: brands[fragranceData.brandSlug],
+          concentration: fragranceData.concentration,
+          gender: fragranceData.gender,
+          releaseYear: fragranceData.releaseYear,
+          description: fragranceData.description,
+        },
+        create: {
           name: fragranceData.name,
           slug: fragranceData.slug,
           brandId: brands[fragranceData.brandSlug],
@@ -256,11 +269,18 @@ async function main() {
         },
       });
 
-      // Create fragrance notes
+      // Upsert fragrance notes
       for (const noteData of fragranceData.notes) {
         if (notes[noteData.slug]) {
-          await prisma.fragranceNote.create({
-            data: {
+          await prisma.fragranceNote.upsert({
+            where: {
+              fragranceId_noteId: {
+                fragranceId: fragrance.id,
+                noteId: notes[noteData.slug],
+              },
+            },
+            update: { layer: noteData.layer },
+            create: {
               fragranceId: fragrance.id,
               noteId: notes[noteData.slug],
               layer: noteData.layer,
@@ -268,15 +288,20 @@ async function main() {
           });
         }
       }
-      created++;
+
+      if (existing) {
+        updated++;
+      } else {
+        created++;
+      }
     } catch (error) {
-      console.error(`Failed to create ${fragranceData.name}:`, error);
+      console.error(`Failed to upsert ${fragranceData.name}:`, error);
       skipped++;
     }
   }
 
-  console.log(`Created ${created} fragrances (${skipped} skipped)`);
-  console.log("Seed completed successfully!");
+  console.log(`Fragrances: ${created} created, ${updated} updated, ${skipped} skipped`);
+  console.log("Seed completed successfully! User data preserved.");
 }
 
 main()
