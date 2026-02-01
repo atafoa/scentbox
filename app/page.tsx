@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { FragranceCard } from "@/components/fragrance/fragrance-card";
 import { ArrowRight, Star, Users, List } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getTrendingFragrances() {
   return prisma.fragrance.findMany({
     take: 8,
