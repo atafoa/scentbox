@@ -15,13 +15,28 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validated = fragranceSchema.parse(body);
 
-    // Check if brand exists
-    const brand = await prisma.brand.findUnique({
-      where: { id: validated.brandId },
-    });
+    // Find existing brand by ID or name, or create a new one
+    let brand = validated.brandId
+      ? await prisma.brand.findUnique({ where: { id: validated.brandId } })
+      : await prisma.brand.findFirst({
+          where: { name: { equals: validated.brandName, mode: "insensitive" } },
+        });
 
     if (!brand) {
-      return NextResponse.json({ error: "Brand not found" }, { status: 404 });
+      // Create new brand with the provided name
+      const brandSlug = slugify(validated.brandName);
+      let uniqueBrandSlug = brandSlug;
+      let counter = 1;
+      while (await prisma.brand.findUnique({ where: { slug: uniqueBrandSlug } })) {
+        uniqueBrandSlug = `${brandSlug}-${counter}`;
+        counter++;
+      }
+      brand = await prisma.brand.create({
+        data: {
+          name: validated.brandName,
+          slug: uniqueBrandSlug,
+        },
+      });
     }
 
     // Generate unique slug from name + brand
@@ -40,7 +55,7 @@ export async function POST(request: Request) {
         data: {
           name: validated.name,
           slug,
-          brandId: validated.brandId,
+          brandId: brand.id,
           concentration: validated.concentration,
           gender: validated.gender,
           releaseYear: validated.releaseYear,

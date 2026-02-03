@@ -47,7 +47,8 @@ export const profileSchema = z.object({
 
 export const fragranceSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
-  brandId: z.string().min(1, "Brand is required"),
+  brandId: z.string().optional(),
+  brandName: z.string().min(1, "Brand is required").max(100),
   concentration: z.enum(["EAU_FRAICHE", "EAU_DE_COLOGNE", "EAU_DE_TOILETTE", "EAU_DE_PARFUM", "PARFUM", "EXTRAIT"]),
   gender: z.enum(["MASCULINE", "FEMININE", "UNISEX"]),
   releaseYear: z.number().int().min(1900).max(2030).optional().nullable(),

@@ -61,7 +61,7 @@ export function FragranceForm({ brands, notes }: FragranceFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [brandId, setBrandId] = useState("");
+  const [brandName, setBrandName] = useState("");
   const [concentration, setConcentration] = useState("EAU_DE_PARFUM");
   const [gender, setGender] = useState("UNISEX");
   const [releaseYear, setReleaseYear] = useState("");
@@ -108,20 +108,26 @@ export function FragranceForm({ brands, notes }: FragranceFormProps) {
       return;
     }
 
-    if (!brandId) {
-      setError("Please select a brand");
+    if (!brandName.trim()) {
+      setError("Please enter a brand name");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
+      // Find matching brand ID if user selected an existing brand
+      const matchedBrand = brands.find(
+        (b) => b.name.toLowerCase() === brandName.trim().toLowerCase()
+      );
+
       const res = await fetch("/api/fragrances", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
-          brandId,
+          brandId: matchedBrand?.id,
+          brandName: brandName.trim(),
           concentration,
           gender,
           releaseYear: releaseYear ? parseInt(releaseYear) : null,
@@ -179,18 +185,23 @@ export function FragranceForm({ brands, notes }: FragranceFormProps) {
             <Label htmlFor="brand" className="text-base">
               Brand *
             </Label>
-            <Select value={brandId} onValueChange={setBrandId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a brand" />
-              </SelectTrigger>
-              <SelectContent>
-                {brands.map((brand) => (
-                  <SelectItem key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input
+              id="brand"
+              list="brand-suggestions"
+              value={brandName}
+              onChange={(e) => setBrandName(e.target.value)}
+              placeholder="e.g., Dior or enter a new brand"
+              required
+              maxLength={100}
+            />
+            <datalist id="brand-suggestions">
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.name} />
+              ))}
+            </datalist>
+            <p className="text-xs text-muted-foreground">
+              Select an existing brand or type a new one
+            </p>
           </div>
 
           <div className="space-y-2">
