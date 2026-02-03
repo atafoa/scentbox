@@ -213,7 +213,7 @@ async function main() {
   for (const brand of brandsData) {
     const upserted = await prisma.brand.upsert({
       where: { slug: brand.slug },
-      update: { name: brand.name, description: brand.description, country: brand.country },
+      update: { name: brand.name, country: brand.country },
       create: brand,
     });
     brands[brand.slug] = upserted.id;
